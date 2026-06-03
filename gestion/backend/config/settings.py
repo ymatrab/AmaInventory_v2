@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "apps.campaigns",
     "apps.counts",
     "apps.reconciliation",
+    "apps.sap",
 ]
 
 MIDDLEWARE = [
