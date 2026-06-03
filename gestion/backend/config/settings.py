@@ -36,7 +36,13 @@ INSTALLED_APPS = [
     # Third-party
     "rest_framework",
     "corsheaders",
-    # Local apps are added in Phase 1.
+    # Local apps
+    "apps.accounts",
+    "apps.warehouses",
+    "apps.items",
+    "apps.campaigns",
+    "apps.counts",
+    "apps.reconciliation",
 ]
 
 MIDDLEWARE = [
@@ -91,6 +97,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- DRF ---
@@ -103,6 +111,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 50,
+    "EXCEPTION_HANDLER": "apps.accounts.exceptions.api_exception_handler",
 }
 
 # --- CORS (gestion frontend dev origin only) ---

@@ -28,9 +28,9 @@ db: env
 migrate: env
 	$(COMPOSE) run --rm web python manage.py migrate
 
-# Demo seed (real data lands in Phase 1/9).
+# Demo seed: groups, one user per group, demo warehouses/items/field users.
 seed: migrate
-	@echo "==> Phase 0: no demo seed yet (added in Phase 1/9)."
+	$(COMPOSE) run --rm web python manage.py seed_demo
 
 # Full dev: gestion stack (web, frontend, postgres, redis, celery, beat) in the
 # background via Docker; public-app dev server in the foreground.

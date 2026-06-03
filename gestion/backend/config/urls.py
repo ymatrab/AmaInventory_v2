@@ -6,14 +6,14 @@ runnable. Domain API routes are added from Phase 1 onward.
 
 from django.contrib import admin
 from django.http import JsonResponse
-from django.urls import path
+from django.urls import include, path
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 
 def index(_request) -> JsonResponse:
-    return JsonResponse({"service": "gestion", "status": "ok", "phase": 0, "docs": "/admin/"})
+    return JsonResponse({"service": "gestion", "status": "ok", "phase": 1, "docs": "/admin/"})
 
 
 @api_view(["GET"])
@@ -26,4 +26,5 @@ urlpatterns = [
     path("", index, name="index"),
     path("admin/", admin.site.urls),
     path("api/health/", health, name="health"),
+    path("api/", include("apps.accounts.urls")),
 ]
