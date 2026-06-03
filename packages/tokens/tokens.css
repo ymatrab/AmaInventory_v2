@@ -1,0 +1,39 @@
+/*
+ * Shared design tokens — Inventory Platform.
+ * PLACEHOLDER values. The user will replace these with the real brand system.
+ * Consumed by BOTH gestion/frontend and public-app. Reference these variables;
+ * never hardcode colors/spacing in components (see CLAUDE.md §6).
+ */
+:root {
+  /* Brand */
+  --color-brand: #1f4e79;
+  --color-brand-contrast: #ffffff;
+  --color-accent: #2e8b57;
+
+  /* Surfaces & text */
+  --color-bg: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-border: #e2e5ea;
+  --color-text: #1a1d21;
+  --color-text-muted: #5b6470;
+
+  /* Status */
+  --color-success: #2e8b57;
+  --color-warning: #c8862b;
+  --color-danger: #c0392b;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* Radius & typography */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-size-base: 16px;
+  --line-height-base: 1.5;
+}

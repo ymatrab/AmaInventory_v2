@@ -21,6 +21,12 @@ node_modules/
 dist/
 build/
 *.log
+*.tsbuildinfo
+
+# Celery beat runtime
+celerybeat-schedule
+celerybeat-schedule.*
+celerybeat.pid
 
 # Docker / local data
 **/pgdata/
