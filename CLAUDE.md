@@ -107,6 +107,7 @@ The user will **add their own React components + design system after scaffolding
 ## 7. Working conventions
 
 - **Work phase by phase** per `BUILD_PLAN.md`. Do not jump ahead. After each phase: run its verification, then **commit** (`feat(phase-N): ...`, conventional commits).
+- **Update the docs at the end of every phase.** A phase is not done until `docs/` reflects it: update the relevant [`docs/reference/`](docs/reference/) pages (data model, APIs, backend/app, sync/SAP, etc.) and the status in [`docs/reference/09-status-and-roadmap.md`](docs/reference/09-status-and-roadmap.md). [`docs/DOCUMENTATION.md`](docs/DOCUMENTATION.md) is the master index — keep it accurate. Treat docs as part of the deliverable, not an afterthought.
 - **Write tests** alongside features; a phase isn't done until its acceptance criteria pass.
 - **Python:** type hints, `ruff` + `black`, DRF serializers/viewsets, thin views / logic in services.
 - **TS:** strict mode, `zod` for input validation on public API routes.

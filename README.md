@@ -12,6 +12,14 @@ The gestion backend talks to the public app over **one outbound-only channel** (
 pull counts). The public app never calls into the local network. See [`CLAUDE.md`](CLAUDE.md)
 §2 for the Golden Rules and [`docs/`](docs/) for the full process and architecture.
 
+## 📖 Documentation
+
+**[`docs/DOCUMENTATION.md`](docs/DOCUMENTATION.md) is the master index — start there.** It explains
+how to read the docs and links to a full reference set under [`docs/reference/`](docs/reference/):
+architecture & trust zones, the data model of both databases, the gestion backend, the public app,
+the complete API reference, the sync connector, the SAP connector (with the go-live checklist),
+tooling & configuration, the security model, and the build status & roadmap.
+
 ## Repository layout
 
 ```
@@ -51,4 +59,9 @@ make lint      # run linters/formatters
 
 ## Build status
 
-Built phase-by-phase per [`BUILD_PLAN.md`](BUILD_PLAN.md). Current: **Phase 0 — scaffolding**.
+Built phase-by-phase per [`BUILD_PLAN.md`](BUILD_PLAN.md). **Phases 0–6 + SAP prep are complete**
+(gestion domain + admin + roles, SAP seam with mock + scaffolded real connector, outbound sync,
+per-agent link+PIN auth, the field counting/re-count UI, and reconciliation with monetary margins,
+re-count, CSV export, and the campaign open/close/extend lifecycle). The gestion SPA, security
+hardening, the end-to-end happy path, and deployment configs (Phases 7–10) remain. Full detail in
+[`docs/reference/09-status-and-roadmap.md`](docs/reference/09-status-and-roadmap.md).

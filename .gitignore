@@ -32,6 +32,10 @@ celerybeat.pid
 **/pgdata/
 **/.docker-data/
 
+# Django collected static + uploaded/generated media (e.g. CSV exports)
+gestion/backend/staticfiles/
+gestion/backend/media/
+
 # IDE
 .idea/
 .vscode/
