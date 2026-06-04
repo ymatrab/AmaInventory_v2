@@ -23,26 +23,27 @@ campaign. It is invoked when a campaign is **armed** (`campaigns.services.arm_ca
 `MockSapClient` returns deterministic, hash-seeded quantities/values so demos and
 tests are repeatable. It is the default and the only client wired today.
 
-## SEAM: implementing the real connector
+## SEAM: going live with the real connector
 
-When on the company network:
+The real connector is **already scaffolded** — `RealSapClient` in `apps/sap/real.py`
+is wired into `get_sap_client()` under the `USE_SAP_MOCK=false` branch, and stays
+inert (raises `NotImplementedError`) until you fill in three things:
 
-1. Add a `SapClient` subclass (e.g. `RealSapClient` in `apps/sap/real.py`) that
-   performs a **read-only** SAP lookup — either a direct DB read or a SAP API call.
-   Map each result to a `SystemStockRow`. **Never write to SAP.**
-2. Wire it in `get_sap_client()` (`apps/sap/__init__.py`) under the
-   `USE_SAP_MOCK=false` branch.
-3. Configure the connection via `SAP_DSN` (or equivalent) in the gestion `.env`;
-   keep it on the local network only.
-4. Decide live-read vs snapshot-at-arming (we snapshot at arming for stability).
+**① The SQL** — `apps/sap/queries/system_stock.sql`
+Replace the placeholder SELECT with your read-only query. It must return columns
+`warehouse_code, item_code, sku, system_qty, unit_value`, bound by `warehouse_code`.
+A SAP Business One example (`OITW`/`OWHS`/`OITM`) is included in the file.
 
-### Planned approach (decided)
+**② The connection** — `RealSapClient._connect()` in `apps/sap/real.py`
+Open a **read-only** connection using your driver. Add the driver to the gestion
+backend image (`requirements.txt`): e.g. `pyodbc` (SAP B1 / SQL Server) or
+`hdbcli` (SAP HANA). Adjust the parameter style and `_map_row()` if your driver
+returns tuples instead of dict rows.
 
-The real connector will be a **read-only SQL query against the SAP database**,
-executed from the gestion local network, mapping result rows into
-`SystemStockRow`. The existing snapshot/sync path (`snapshot_system_stock` on
-arming) stays the same — only the `SapClient` implementation changes. The SQL
-lives entirely inside `apps/sap` (e.g. `apps/sap/real.py` + a `.sql` file); the
-connection string comes from `SAP_DSN`. Read-only: the query never mutates SAP.
+**③ The credentials** — gestion `.env`
+Set `SAP_DSN` (or `SAP_HOST/PORT/DB/USER/PASSWORD`) and flip `USE_SAP_MOCK=false`.
+Keep these on the local network only; never commit real values.
 
-No quantities or values from SAP ever leave the local zone.
+Then `snapshot_system_stock()` (run on campaign arming) works unchanged — only the
+client implementation differs. **Read-only: the query never mutates SAP**, and no
+quantities or values from SAP ever leave the local zone.

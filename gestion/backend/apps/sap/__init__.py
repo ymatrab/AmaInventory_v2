@@ -20,8 +20,8 @@ def get_sap_client() -> SapClient:
 
         return MockSapClient()
 
-    # SEAM: instantiate and return the real read-only SapClient here.
-    raise NotImplementedError(
-        "Real SapClient not implemented. Set USE_SAP_MOCK=true or wire the "
-        "real read-only connector in apps/sap (see apps/sap/README.md)."
-    )
+    # SEAM: real read-only connector. RealSapClient is scaffolded but inert until
+    # its _connect() + SQL query are filled in (see apps/sap/README.md).
+    from .real import RealSapClient
+
+    return RealSapClient()

@@ -131,4 +131,12 @@ CELERY_TIMEZONE = TIME_ZONE
 
 # --- SAP / sync seams (see CLAUDE.md §2, BUILD_PLAN Phase 2/4) ---
 USE_SAP_MOCK = os.environ.get("USE_SAP_MOCK", "true").lower() == "true"
+# SEAM: real SAP read-only connection (unused while the mock is active).
+SAP_DSN = os.environ.get("SAP_DSN", "")
+SAP_DRIVER = os.environ.get("SAP_DRIVER", "")
+SAP_HOST = os.environ.get("SAP_HOST", "")
+SAP_PORT = os.environ.get("SAP_PORT", "")
+SAP_DB = os.environ.get("SAP_DB", "")
+SAP_USER = os.environ.get("SAP_USER", "")
+SAP_PASSWORD = os.environ.get("SAP_PASSWORD", "")
 PUBLIC_API_BASE_URL = os.environ.get("PUBLIC_API_BASE_URL", "http://localhost:3000")

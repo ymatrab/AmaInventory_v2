@@ -1,5 +1,7 @@
 """Phase 2: SAP read-only seam + system-stock snapshot on arming."""
 
+import types
+
 import pytest
 
 from apps.campaigns.models import Campaign, CampaignWarehouse
@@ -8,6 +10,7 @@ from apps.items.models import Item
 from apps.reconciliation.models import SystemStock
 from apps.sap import get_sap_client
 from apps.sap.mock import MockSapClient
+from apps.sap.real import RealSapClient
 from apps.warehouses.models import Warehouse
 
 
@@ -29,10 +32,18 @@ def test_mock_is_the_default_client(settings):
     assert isinstance(get_sap_client(), MockSapClient)
 
 
-def test_real_client_not_wired(settings):
+def test_real_client_selected_when_mock_disabled(settings):
     settings.USE_SAP_MOCK = False
+    assert isinstance(get_sap_client(), RealSapClient)
+
+
+def test_real_client_inert_until_wired(settings):
+    settings.USE_SAP_MOCK = False
+    client = get_sap_client()
+    warehouse = types.SimpleNamespace(whs_code="W1")
+    # _connect() is a TODO seam → raises until the real connector is implemented.
     with pytest.raises(NotImplementedError):
-        get_sap_client()
+        client.get_system_stock(campaign=None, warehouse=warehouse)
 
 
 @pytest.mark.django_db
