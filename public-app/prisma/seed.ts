@@ -1,8 +1,12 @@
+import bcrypt from "bcryptjs";
+
 import { PrismaClient } from "@prisma/client";
 
 // Seeds a demo OPEN campaign so the field app + routes can be exercised locally.
-// NO system stock / values here (CLAUDE.md §2). PIN hashing arrives in Phase 5.
+// NO system stock / values here (CLAUDE.md §2).
+// Demo agent login: token "demo-token", PIN "1234".
 const prisma = new PrismaClient();
+const DEMO_PIN_HASH = bcrypt.hashSync("1234", 10);
 
 const CAMPAIGN_ID = "demo-campaign";
 const WAREHOUSE_ID = "wh-demo-casa";
@@ -73,12 +77,12 @@ async function main() {
 
   await prisma.agentCredential.upsert({
     where: { agentId_campaignId: { agentId: AGENT_ID, campaignId: CAMPAIGN_ID } },
-    update: { active: true },
+    update: { active: true, pinHash: DEMO_PIN_HASH, failedAttempts: 0 },
     create: {
       agentId: AGENT_ID,
       campaignId: CAMPAIGN_ID,
       token: "demo-token",
-      pinHash: "phase5-placeholder",
+      pinHash: DEMO_PIN_HASH,
     },
   });
 

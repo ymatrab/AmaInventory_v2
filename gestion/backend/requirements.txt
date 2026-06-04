@@ -11,6 +11,9 @@ celery>=5.4,<6.0
 redis>=5.0,<6.0
 requests>=2.32,<3.0
 
+# Auth / credentials
+bcrypt>=4.2,<5.0
+
 # Server
 gunicorn>=23.0,<24.0
 

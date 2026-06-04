@@ -20,12 +20,14 @@
   "dependencies": {
     "@ama/tokens": "file:../packages/tokens",
     "@prisma/client": "^5.19.1",
+    "bcryptjs": "^2.4.3",
     "next": "^14.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.16.5",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
