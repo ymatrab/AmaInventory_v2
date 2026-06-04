@@ -44,6 +44,7 @@ Read these in order to understand the implementation. Each is self-contained.
 | 07 | [Tooling, commands & configuration](reference/07-tooling-and-ops.md) | Run the stack: Docker, Makefile, ports, every environment variable. |
 | 08 | [Security model](reference/08-security.md) | Verify the Golden Rules in code: trust boundaries, auth, secrets, what protects the local zone. |
 | 09 | [Build status & roadmap](reference/09-status-and-roadmap.md) | See exactly what is done (Phases 0–7 + SAP prep) and what remains (Phases 8–10). |
+| 10 | [Running & manually testing locally](reference/10-local-testing.md) | **Bring the whole platform up and click through it** — setup, URLs, logins, test tracks, troubleshooting. |
 
 ### 3. Operations
 Deployment runbook lives in `BUILD_PLAN.md` Appendix D and will be expanded to `docs/RUNBOOK.md`
