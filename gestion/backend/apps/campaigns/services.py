@@ -11,6 +11,7 @@ import secrets
 
 import bcrypt
 from django.db import transaction
+from django.utils import timezone
 
 from apps.accounts.audit import record_audit
 from apps.sap.services import snapshot_system_stock
@@ -58,3 +59,52 @@ def generate_credentials(campaign: Campaign, actor=None) -> list[dict]:
         )
         results.append({"matricule": field_user.matricule, "token": token, "pin": pin})
     return results
+
+
+@transaction.atomic
+def open_campaign(campaign: Campaign, actor=None, client=None) -> Campaign:
+    """Open the counting window: status -> OPEN, stamp open_at, push status out."""
+    campaign.status = Campaign.Status.OPEN
+    if campaign.open_at is None:
+        campaign.open_at = timezone.now()
+    campaign.save(update_fields=["status", "open_at"])
+    _push_status(campaign, client)
+    record_audit(actor, "campaign.open", "Campaign", campaign.pk)
+    return campaign
+
+
+@transaction.atomic
+def extend_campaign(campaign: Campaign, new_close_at, actor=None, client=None) -> Campaign:
+    """Move the window's close time later (or earlier) and push it out."""
+    campaign.close_at = new_close_at
+    campaign.save(update_fields=["close_at"])
+    _push_status(campaign, client)
+    record_audit(
+        actor, "campaign.extend", "Campaign", campaign.pk, close_at=new_close_at.isoformat()
+    )
+    return campaign
+
+
+@transaction.atomic
+def close_campaign(campaign: Campaign, actor=None, client=None) -> Campaign:
+    """Close the campaign and expire every agent token.
+
+    Pushing status=CLOSED is what blocks field login (the public window check
+    fails); we also deactivate/expire local credentials so they cannot be reused.
+    """
+    now = timezone.now()
+    campaign.status = Campaign.Status.CLOSED
+    campaign.close_at = now
+    campaign.save(update_fields=["status", "close_at"])
+    campaign.credentials.update(active=False, expires_at=now)
+    _push_status(campaign, client)
+    record_audit(actor, "campaign.close", "Campaign", campaign.pk)
+    return campaign
+
+
+def _push_status(campaign: Campaign, client=None) -> None:
+    """Outbound-only: push the campaign window/status to the public app."""
+    from apps.sync.client import SyncClient
+
+    client = client or SyncClient()
+    client.push_campaign(campaign)
