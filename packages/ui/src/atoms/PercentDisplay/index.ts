@@ -1,1 +1,0 @@
-export { PercentDisplay } from './PercentDisplay';

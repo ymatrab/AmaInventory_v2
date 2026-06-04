@@ -6,15 +6,6 @@
 .env.*
 !.env.example
 
-# Python
-__pycache__/
-*.py[cod]
-.venv/
-venv/
-*.egg-info/
-.pytest_cache/
-.ruff_cache/
-
 # Node / Next.js
 node_modules/
 .next/
@@ -23,18 +14,13 @@ build/
 *.log
 *.tsbuildinfo
 
-# Celery beat runtime
-celerybeat-schedule
-celerybeat-schedule.*
-celerybeat.pid
-
 # Docker / local data
 **/pgdata/
 **/.docker-data/
 
-# Django collected static + uploaded/generated media (e.g. CSV exports)
-gestion/backend/staticfiles/
-gestion/backend/media/
+# packages/tokens runtime deps (source is committed; node_modules is not)
+packages/tokens/node_modules/
+packages/tokens/dist/
 
 # IDE
 .idea/
