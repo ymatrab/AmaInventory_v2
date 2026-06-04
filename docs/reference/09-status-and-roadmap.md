@@ -7,7 +7,7 @@ last commit on `main`.
 
 ---
 
-## 1. Done — Phases 0–6 + SAP prep
+## 1. Done — Phases 0–7 + SAP prep
 
 | Phase | Title | Delivered |
 |-------|-------|-----------|
@@ -19,23 +19,18 @@ last commit on `main`.
 | **4** | Outbound sync | `SyncClient` (signed push + pull); idempotent `upsert_count_line` (key `line_uid`+`version`); compound cursor `updated_at|line_uid`; `SyncCursor`; Celery-beat poller; `sync_now` command; public `/api/sync/*` with HMAC auth. |
 | **5** | Field auth + counting UI | Per-agent `generate_credentials` (token + bcrypt PIN hash, rotatable); link+PIN login with window check + lockout + signed httpOnly session; magic-link page; `LoginForm`, `CountTable`; wired pages my-campaign / count / recount / progress. |
 | **6** | Reconciliation, margins, re-count, CSV | `build_reconciliation` (join counts × `SystemStock` → `gap_qty`/`gap_value`); monetary per-WHS `value_margin` (CDG-editable, re-flags `within_margin`); `flag_for_recount` (re-count copy preserves original, pushes status + item codes); `generate_csv_export` (+ `csv_export.py` mapping with SAP `# SEAM`); campaign `open`/`close`/`extend` lifecycle (close expires tokens); `reconcile` management command. |
+| **7** | Gestion REST API + React SPA | DRF API (session auth + viewsets for campaigns/assignments/warehouses/items/field-users/counts/reconciliations/exports/signoffs/audit); React Router SPA (Login, Campaigns overview, Create, Campaign detail with role-aware tabs: Lifecycle, Assignment, Live counts, Reconciliation workspace, Sign-off, Agent KPI; History/Archive; Analysis placeholder); Vite proxy for same-origin session+CSRF; token-styled `// DESIGN-SLOT` UI. |
 
-**Tests:** 33 gestion (pytest) + 18 public (vitest), all passing.
+**Tests:** 37 gestion (pytest) + 18 public (vitest), all passing. Frontend builds/lints/type-checks clean.
 
 **Commits on `main`:** scaffold → docs restructure → phase-1 → phase-2 → SAP scaffold → phase-3 →
-phase-4 → phase-5 → docs → phase-6.
+phase-4 → phase-5 → docs → phase-6 → phase-7.
 
 ---
 
-## 2. Remaining — Phases 7–10
+## 2. Remaining — Phases 8–10
 
-### Phase 7 — Gestion React SPA *(next up)*
-All staff pages from architecture §10.1: campaigns overview, create, assignment, confirm (Audit),
-open/close/extend, live counts monitor, **reconciliation workspace** (set margin, flag re-count),
-re-count management, CSV download, sign-off tracking, agent KPI, history/archive, placeholder
-analysis dashboard. Role-aware navigation.
-
-### Phase 8 — Security hardening
+### Phase 8 — Security hardening *(next up)*
 Cloudflare-ready headers, rate limits (login + sync), strict CORS, service-token rotation, HMAC
 replay window review, VPN-only binding docs, full audit-log coverage, **automated assertion that
 the public schema has no stock columns**, secrets review. (See [08 · Security](08-security.md) §8.)

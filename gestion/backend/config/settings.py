@@ -22,8 +22,19 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-insecure-change-me")
 DEBUG = os.environ.get("DEBUG", "true").lower() == "true"
 ALLOWED_HOSTS = [
     h.strip()
-    for h in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    for h in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1,web").split(",")
     if h.strip()
+]
+
+# The SPA reaches the API through the Vite dev proxy (same-origin); these are the
+# browser origins Django's CSRF check trusts for session POSTs.
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.environ.get(
+        "CSRF_TRUSTED_ORIGINS",
+        "http://localhost:5174,http://127.0.0.1:5174",
+    ).split(",")
+    if o.strip()
 ]
 
 INSTALLED_APPS = [

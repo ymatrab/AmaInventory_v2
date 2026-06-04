@@ -43,7 +43,7 @@ Read these in order to understand the implementation. Each is self-contained.
 | 06 | [SAP connector (the seam)](reference/06-sap-connector.md) | Wire the real SAP SQL when you have credentials. **This is the go-live checklist.** |
 | 07 | [Tooling, commands & configuration](reference/07-tooling-and-ops.md) | Run the stack: Docker, Makefile, ports, every environment variable. |
 | 08 | [Security model](reference/08-security.md) | Verify the Golden Rules in code: trust boundaries, auth, secrets, what protects the local zone. |
-| 09 | [Build status & roadmap](reference/09-status-and-roadmap.md) | See exactly what is done (Phases 0–5 + SAP prep) and what remains (Phases 6–10). |
+| 09 | [Build status & roadmap](reference/09-status-and-roadmap.md) | See exactly what is done (Phases 0–7 + SAP prep) and what remains (Phases 8–10). |
 
 ### 3. Operations
 Deployment runbook lives in `BUILD_PLAN.md` Appendix D and will be expanded to `docs/RUNBOOK.md`
@@ -93,9 +93,11 @@ The full **gestion** Django backend (8 apps, all models + migrations + admin + r
 generation**, the full **public Next.js field app** (Prisma schema with no stock columns, field API,
 sync-receiving API, link+PIN login with lockout, and the counting/re-count/progress pages), and the
 **reconciliation engine** (gap + monetary per-WHS margin, re-count, CSV export with a SAP seam,
-campaign open/close/extend lifecycle) are all built and tested. Phases 0–6 plus SAP preparation are
-complete (33 gestion + 18 public tests passing). The gestion React SPA, security hardening, the
-end-to-end happy path, and deployment configs (Phases 7–10) remain. See
+campaign open/close/extend lifecycle), and the **gestion REST API + React SPA** (session auth,
+campaigns/assignment/confirm/lifecycle, live-counts monitor, the CDG reconciliation workspace,
+re-count, CSV download, sign-off, agent KPI, history) are all built and tested. Phases 0–7 plus SAP
+preparation are complete (37 gestion + 18 public tests passing; frontend builds clean). Security
+hardening, the end-to-end happy path, and deployment configs (Phases 8–10) remain. See
 [reference/09-status-and-roadmap.md](reference/09-status-and-roadmap.md).
 </content>
 </invoke>

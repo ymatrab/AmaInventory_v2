@@ -144,17 +144,30 @@ Every model is registered in its app's `admin.py`. `AuditLog` is registered **re
 
 ---
 
-## 6. Frontend (React + Vite SPA) — scaffold today, full SPA in Phase 7
+## 6. REST API for the SPA (Phase 7)
 
-- Root: [`gestion/frontend/`](../../gestion/frontend/) — Vite + React + TypeScript (strict).
-- Runs in the `frontend` Docker container on **port 5174** (5173 was taken on the host).
-- Consumes the shared design tokens via the `@ama/tokens` workspace package.
-- `src/App.tsx` — placeholder that pings the backend health endpoint via `src/lib/api.ts`.
-- The full staff SPA (campaigns overview, create, assignment, confirm, live monitor,
-  reconciliation workspace, re-count management, CSV download, sign-off, KPIs, history) is
-  **Phase 7** — see [09 · Status](09-status-and-roadmap.md). Components are kept small and
-  presentational with `// DESIGN-SLOT:` markers so the user's own design system drops in
-  (CLAUDE.md §6).
+The SPA talks to a DRF API mounted at `/api/` (router aggregated in `apps/accounts/urls.py`):
+session auth (`/api/auth/csrf|login|logout|me/`) + viewsets across `campaigns`, `assignments`,
+`warehouses`, `items`, `field-users`, `counts` (monitor + KPI actions), `reconciliations`
+(build/set_margin/flag_recount), `exports` (generate + download), `signoffs`, and `audit`. Views are
+thin — lifecycle/reconciliation actions call the services above. Full endpoint list:
+[04 · API reference](04-api-reference.md) §1. Serializers live in each app's `serializers.py`.
+
+## 7. Frontend (React + Vite SPA) — Phase 7
+
+- Root: [`gestion/frontend/`](../../gestion/frontend/) — Vite + React + TypeScript (strict), React Router.
+- Runs in the `frontend` Docker container on **port 5174**; a Vite **proxy** forwards `/api`,
+  `/admin`, `/static` to the `web` service so the SPA is same-origin (clean session cookie + CSRF).
+- `src/lib/api.ts` — typed API client (adds `X-CSRFToken` on unsafe calls); `src/lib/auth.tsx` —
+  auth context. Data logic is kept out of components (CLAUDE.md §6).
+- Pages (architecture §10.1): **Login**, **Campaigns overview**, **Create campaign**, **Campaign
+  detail** with role-aware tabs — *Lifecycle* (arm / credentials / push / open·close·extend / sync),
+  *Assignment* (assign + Audit confirm), *Live counts* (per-WHS monitor), *Reconciliation* (gap
+  table, set margin, flag re-count, CSV generate + download), *Sign-off*, *Agent KPI* — plus
+  **History/Archive** (audit log) and a placeholder **Analysis** dashboard.
+- UI primitives in `components/ui.tsx` + `components/Shell.tsx` are token-styled with
+  `// DESIGN-SLOT` markers so the user's design system drops in. Role gating hides/disables actions
+  by group. Builds, lints, and type-checks clean in the container.
 
 ---
 
@@ -169,6 +182,8 @@ Every model is registered in its app's `admin.py`. `AuditLog` is registered **re
 - `test_phase5.py` — credential generation: PIN hash verifies, rotation, no-assignment case.
 - `test_phase6.py` — reconciliation: gap computation, monetary per-WHS margin + re-flagging,
   re-count preserves the original + pushes, CSV export file/record, close expires tokens, open/extend.
+- `test_phase7.py` — REST API: `me` role flags, campaign CRUD + arm, reconciliation build + CSV
+  download, unauthenticated rejection.
 
-**Total: 33 gestion tests** (+ 18 public) passing.
+**Total: 37 gestion tests** (+ 18 public) passing.
 </content>

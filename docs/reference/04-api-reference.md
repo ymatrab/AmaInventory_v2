@@ -13,16 +13,38 @@ All errors use the uniform envelope: `{"error": {"code": "<machine_code>", "deta
 
 ---
 
-## 1. Gestion API (Django)
+## 1. Gestion API (Django) — auth = session cookie + CSRF
 
-| Method | Path | Auth | Purpose |
-|--------|------|------|---------|
-| GET | `/api/health/` | none | Liveness probe (used by the Docker healthcheck). |
-| — | `/admin/` | Django session | Django admin for all models. |
-| — | `/api/...` | session + group | Staff REST viewsets (campaigns, reconciliation, exports) land here in Phases 6–7. |
+The SPA reaches this API **same-origin** through the Vite dev proxy, so the session cookie and CSRF
+token work without cross-origin cookie pain. Default DRF auth = session; default permission =
+`IsAuthenticated`; page size 50; uniform error envelope. The SPA additionally **hides/disables**
+actions by role (`is_cdg` / `is_audit` / `is_inventory_responsible` from `/api/auth/me/`).
 
-Default DRF auth = session; default permission = `IsAuthenticated`; role checks via
-`IsInventoryResponsible` / `IsAudit` / `IsCDG`. Page size 50.
+### Session
+| Method | Path | Purpose |
+|--------|------|---------|
+| GET | `/api/health/` | Liveness probe (Docker healthcheck), no auth. |
+| GET | `/api/auth/csrf/` | Sets the `csrftoken` cookie before login. |
+| POST | `/api/auth/login/` | `{username, password}` → Django session; returns the user + role flags. |
+| POST | `/api/auth/logout/` | Ends the session. |
+| GET | `/api/auth/me/` | Current user `{username, groups, is_cdg, is_audit, is_inventory_responsible, …}`. |
+| — | `/admin/` | Django admin for all models. |
+
+### Domain (DRF router)
+| Resource | Endpoints |
+|----------|-----------|
+| Campaigns | `GET/POST /api/campaigns/`, `GET /api/campaigns/{id}/`; actions `POST {id}/arm`, `generate_credentials`, `push_setup`, `open`, `close`, `extend`, `sync_now`. |
+| Assignments | `GET/POST /api/assignments/?campaign=`, `DELETE {id}`, `POST /api/assignments/confirm/` (Audit). |
+| Warehouses / Items / Field users | `GET/POST /api/warehouses/`, `/api/items/`, `GET /api/field-users/`. |
+| Counts (monitoring) | `GET /api/counts/?campaign=&warehouse=&agent=`; `GET /api/counts/monitor/?campaign=`; `GET /api/counts/kpi/?campaign=`. |
+| Reconciliation | `GET /api/reconciliations/?campaign=`; actions `POST /api/reconciliations/build/`, `set_margin/`, `flag_recount/`. |
+| CSV exports | `GET /api/exports/?campaign=`; `POST /api/exports/generate/`; `GET /api/exports/{id}/download/` (streams the CSV). |
+| Sign-off | `GET/POST/PATCH /api/signoffs/?campaign=`. |
+| Audit log | `GET /api/audit/?entity=&entity_id=`. |
+
+Lifecycle/reconciliation actions are thin wrappers over the services in
+[02 · Gestion backend](02-gestion-backend.md). The Phase-1 endpoints `/api/whoami/` and
+`/api/cdg-only/` remain for backward compatibility.
 
 ---
 
