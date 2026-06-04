@@ -11,6 +11,12 @@ const proxyTarget = process.env.VITE_PROXY_TARGET ?? "http://web:8000";
 
 export default defineConfig({
   plugins: [react()],
+  // @amafin/ui ships TSX source (vendored at ../../packages/ui). Exclude it from
+  // dep pre-bundling so Vite compiles it through the React/esbuild pipeline; its
+  // own runtime deps resolve from packages/ui/node_modules. Dedupe React so the
+  // library and the app share one copy (it lists react as a peer dependency).
+  optimizeDeps: { exclude: ["@amafin/ui"] },
+  resolve: { dedupe: ["react", "react-dom", "react/jsx-runtime"] },
   server: {
     host: true,
     port: 5174,

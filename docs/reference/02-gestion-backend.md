@@ -168,6 +168,9 @@ thin — lifecycle/reconciliation actions call the services above. Full endpoint
 - UI primitives in `components/ui.tsx` + `components/Shell.tsx` are token-styled with
   `// DESIGN-SLOT` markers so the user's design system drops in. Role gating hides/disables actions
   by group. Builds, lints, and type-checks clean in the container.
+- **Design system:** the vendored **`@amafin/ui`** library ([`packages/ui/`](../../packages/ui/))
+  is wired into the SPA; the **Login** page is built from it as the worked example. Full setup +
+  usage in [11 · Design system](11-design-system.md).
 
 ---
 
