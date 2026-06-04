@@ -1,0 +1,26 @@
+# Local Postgres for the public-app (dev only). In prod the public app uses a
+# managed serverless Postgres (Neon/Supabase) — see Appendix D. Separate trust
+# zone from gestion: this DB holds NO system stock/values (CLAUDE.md §2).
+# Port 5433 on the host to avoid clashing with gestion's Postgres (5432).
+name: public-app
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      # NB: "public" is a reserved Postgres role — do not use it as POSTGRES_USER.
+      POSTGRES_USER: ${POSTGRES_USER:-ama}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ama}
+      POSTGRES_DB: ${POSTGRES_DB:-public_app}
+    volumes:
+      - public_pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ama}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+volumes:
+  public_pgdata:

@@ -1,0 +1,124 @@
+// Public-app database (Appendix A.2). TRUST ZONE: internet.
+// NEVER add system quantities, costs, values, gaps, or margins (CLAUDE.md §2).
+// The only quantity data here is what an agent physically counted.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CampaignStatus {
+  DRAFT
+  ARMED
+  OPEN
+  RECOUNT
+  CLOSED
+  ARCHIVED
+}
+
+enum AgentRole {
+  AGENT
+  WAREHOUSEMAN
+}
+
+// id mirrors the gestion campaign id (kept as text to match the source system).
+model Campaign {
+  id      String         @id
+  code    String         @unique
+  status  CampaignStatus @default(ARMED)
+  openAt  DateTime?      @map("open_at")
+  closeAt DateTime?      @map("close_at")
+
+  warehouses  Warehouse[]
+  items       ItemRef[]
+  credentials AgentCredential[]
+  countLines  CountLine[]
+
+  @@map("campaign")
+}
+
+model Warehouse {
+  id         String @id @default(uuid())
+  whsCode    String @map("whs_code")
+  name       String
+  city       String @default("")
+  campaignId String @map("campaign_id")
+
+  campaign   Campaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  countLines CountLine[]
+
+  @@unique([campaignId, whsCode])
+  @@map("warehouse")
+}
+
+// Item reference only — no quantities.
+model ItemRef {
+  id           String @id @default(uuid())
+  itemCode     String @map("item_code")
+  sku          String
+  description  String @default("")
+  colorParfum  String @default("") @map("color_parfum")
+  baseUnit     String @default("unit") @map("base_unit")
+  unitsPerPack Int    @default(1) @map("units_per_pack")
+  campaignId   String @map("campaign_id")
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, itemCode, sku])
+  @@map("item_ref")
+}
+
+model Agent {
+  id       String    @id // matricule
+  fullName String    @map("full_name")
+  role     AgentRole
+
+  credentials AgentCredential[]
+  countLines  CountLine[]
+
+  @@map("agent")
+}
+
+model AgentCredential {
+  id             String    @id @default(uuid())
+  agentId        String    @map("agent_id")
+  campaignId     String    @map("campaign_id")
+  token          String    @unique
+  pinHash        String    @map("pin_hash")
+  expiresAt      DateTime? @map("expires_at")
+  active         Boolean   @default(true)
+  failedAttempts Int       @default(0) @map("failed_attempts")
+
+  agent    Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, campaignId])
+  @@map("agent_credential")
+}
+
+model CountLine {
+  lineUid     String   @id @map("line_uid") // UUID, stable across edits/sync
+  campaignId  String   @map("campaign_id")
+  warehouseId String   @map("warehouse_id")
+  itemCode    String   @map("item_code")
+  qtyUnits    Decimal  @default(0) @map("qty_units")
+  qtyPacks    Decimal  @default(0) @map("qty_packs")
+  agentId     String   @map("agent_id")
+  isRecount   Boolean  @default(false) @map("is_recount")
+  flagged     Boolean  @default(false)
+  version     Int      @default(1)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  campaign  Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  agent     Agent     @relation(fields: [agentId], references: [id])
+
+  @@index([campaignId, updatedAt])
+  @@index([campaignId, agentId])
+  @@map("count_line")
+}

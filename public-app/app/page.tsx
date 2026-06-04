@@ -1,12 +1,20 @@
-// DESIGN-SLOT: replace with the user's design-system landing / "no active campaign" screen.
+import Link from "next/link";
+
+import { Shell } from "@/components/Shell";
+
+// Landing / "no active campaign" — the default closed state.
+// DESIGN-SLOT: brand landing screen.
 export default function Home() {
   return (
-    <main style={{ maxWidth: 640, margin: "0 auto", padding: "var(--space-6)" }}>
-      <h1 style={{ color: "var(--color-brand)" }}>Inventory — Field App</h1>
+    <Shell title="Inventory — Field App">
       <p style={{ color: "var(--color-text-muted)" }}>
-        Public app for field users (Agent · Warehouseman). Phase 0 scaffold.
+        The app opens during a campaign window. If you have a counting link, open it to sign in.
       </p>
-      <p>No active campaign. The app opens during a campaign window.</p>
-    </main>
+      <p>
+        <Link href="/login" style={{ color: "var(--color-brand)" }}>
+          Go to sign in →
+        </Link>
+      </p>
+    </Shell>
   );
 }

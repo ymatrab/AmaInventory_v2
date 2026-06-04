@@ -36,4 +36,13 @@ When on the company network:
    keep it on the local network only.
 4. Decide live-read vs snapshot-at-arming (we snapshot at arming for stability).
 
+### Planned approach (decided)
+
+The real connector will be a **read-only SQL query against the SAP database**,
+executed from the gestion local network, mapping result rows into
+`SystemStockRow`. The existing snapshot/sync path (`snapshot_system_stock` on
+arming) stays the same — only the `SapClient` implementation changes. The SQL
+lives entirely inside `apps/sap` (e.g. `apps/sap/real.py` + a `.sql` file); the
+connection string comes from `SAP_DSN`. Read-only: the query never mutates SAP.
+
 No quantities or values from SAP ever leave the local zone.
