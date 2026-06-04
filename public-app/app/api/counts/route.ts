@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
         campaignId: campaign.id,
         warehouseId: warehouse.id,
         itemCode: body.item_code,
+        sku: body.sku,
         qtyUnits: body.qty_units,
         qtyPacks: body.qty_packs,
         agentId: session.agentId,
@@ -61,3 +62,5 @@ export async function POST(req: NextRequest) {
     return errorResponse(err);
   }
 }
+
+export const dynamic = "force-dynamic";

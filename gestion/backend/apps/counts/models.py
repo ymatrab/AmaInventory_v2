@@ -70,6 +70,11 @@ class CountLine(models.Model):
 
     def save(self, *args, **kwargs):
         self.total_units = self.compute_total_units()
+        # Ensure the recomputed total is persisted even on partial saves
+        # (e.g. update_or_create passes update_fields without total_units).
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None and "total_units" not in update_fields:
+            kwargs["update_fields"] = list(update_fields) + ["total_units"]
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:

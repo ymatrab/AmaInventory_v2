@@ -11,6 +11,9 @@ x-backend-env: &backend-env
   ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
   USE_SAP_MOCK: ${USE_SAP_MOCK:-true}
   PUBLIC_API_BASE_URL: ${PUBLIC_API_BASE_URL:-http://host.docker.internal:3000}
+  SYNC_SERVICE_TOKEN: ${SYNC_SERVICE_TOKEN:-}
+  SYNC_HMAC_SECRET: ${SYNC_HMAC_SECRET:-}
+  SYNC_POLL_SECONDS: ${SYNC_POLL_SECONDS:-120}
 
 services:
   postgres:

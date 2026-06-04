@@ -18,8 +18,10 @@ export function serializeLine(line: {
   lineUid: string;
   warehouseId: string;
   itemCode: string;
+  sku: string;
   qtyUnits: unknown;
   qtyPacks: unknown;
+  agentId: string;
   isRecount: boolean;
   flagged: boolean;
   version: number;
@@ -29,8 +31,10 @@ export function serializeLine(line: {
     line_uid: line.lineUid,
     warehouse_id: line.warehouseId,
     item_code: line.itemCode,
+    sku: line.sku,
     qty_units: Number(line.qtyUnits),
     qty_packs: Number(line.qtyPacks),
+    agent_id: line.agentId,
     is_recount: line.isRecount,
     flagged: line.flagged,
     version: line.version,

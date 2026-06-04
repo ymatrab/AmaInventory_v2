@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "apps.counts",
     "apps.reconciliation",
     "apps.sap",
+    "apps.sync",
 ]
 
 MIDDLEWARE = [
@@ -124,10 +125,21 @@ CORS_ALLOWED_ORIGINS = [
     if o.strip()
 ]
 
-# --- Celery (sync poller / jobs — wired in Phase 4) ---
+# --- Celery (sync poller / jobs) ---
 CELERY_BROKER_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL", "redis://redis:6379/0")
 CELERY_TIMEZONE = TIME_ZONE
+
+# --- Sync channel (gestion -> public; outbound only) ---
+SYNC_SERVICE_TOKEN = os.environ.get("SYNC_SERVICE_TOKEN", "")
+SYNC_HMAC_SECRET = os.environ.get("SYNC_HMAC_SECRET", "")
+SYNC_POLL_SECONDS = int(os.environ.get("SYNC_POLL_SECONDS", "120"))
+CELERY_BEAT_SCHEDULE = {
+    "poll-open-campaigns": {
+        "task": "apps.sync.tasks.poll_open_campaigns",
+        "schedule": float(SYNC_POLL_SECONDS),
+    },
+}
 
 # --- SAP / sync seams (see CLAUDE.md §2, BUILD_PLAN Phase 2/4) ---
 USE_SAP_MOCK = os.environ.get("USE_SAP_MOCK", "true").lower() == "true"

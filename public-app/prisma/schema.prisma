@@ -105,6 +105,7 @@ model CountLine {
   campaignId  String   @map("campaign_id")
   warehouseId String   @map("warehouse_id")
   itemCode    String   @map("item_code")
+  sku         String   @map("sku") // variant level; reconciliation keys on item_code + sku
   qtyUnits    Decimal  @default(0) @map("qty_units")
   qtyPacks    Decimal  @default(0) @map("qty_packs")
   agentId     String   @map("agent_id")

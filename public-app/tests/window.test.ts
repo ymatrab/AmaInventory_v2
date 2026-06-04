@@ -57,6 +57,7 @@ describe("countSubmitSchema", () => {
     const parsed = countSubmitSchema.parse({
       warehouse_id: "wh-1",
       item_code: "ITM-001",
+      sku: "ITM-001-RED",
       qty_units: "5",
       qty_packs: 2,
     });
